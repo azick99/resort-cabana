@@ -1,7 +1,14 @@
-import React from "react";
+import { ResortMap } from "./components/ResortMap";
 
-const App = () => {
-  return <div>App</div>;
-};
-
-export default App;
+export default function App() {
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "2rem 1rem",
+      }}
+    >
+      <ResortMap />
+    </main>
+  );
+}
