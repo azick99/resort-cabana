@@ -149,4 +149,4 @@ no authentication beyond room number + name matching.
 
 ## Screenshot
 
-![Resort Map](cabana-screenshot.png)
+![Resort Map](cabana-screenshot.jpeg)
