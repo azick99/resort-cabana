@@ -9,9 +9,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["src", "tests"],
-  "ts-node": {
-    "esm": false,
-    "transpileOnly": true
-  }
+  "include": ["src"],
+  "exclude": ["tests", "dist"]
 }
