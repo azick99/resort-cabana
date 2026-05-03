@@ -3,26 +3,29 @@ import { fetchMap } from "../api";
 import type { MapData, Tile } from "../types";
 import { MapTile, TILE_SIZE } from "./Tile";
 import { Legend } from "./Legend";
+import { BookingModal } from "./BookingModal";
 
 export function ResortMap() {
   const [mapData, setMapData] = useState<MapData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Phase 5: selected tile for booking modal
   const [selected, setSelected] = useState<Tile | null>(null);
 
-  // Load the map from the API
+  // ── Group loading/error into one state object ─────────────────────────────
+  const [fetchState, setFetchState] = useState({
+    loading: true,
+    error: null as string | null,
+  });
+
   const loadMap = useCallback(async () => {
+    setFetchState({ loading: true, error: null });
     try {
-      setLoading(true);
-      setError(null);
       const data = await fetchMap();
       setMapData(data);
+      setFetchState({ loading: false, error: null });
     } catch {
-      setError("Could not load the resort map. Is the backend running?");
-    } finally {
-      setLoading(false);
+      setFetchState({
+        loading: false,
+        error: "Could not load the resort map. Is the backend running?",
+      });
     }
   }, []);
 
@@ -30,23 +33,23 @@ export function ResortMap() {
     loadMap();
   }, [loadMap]);
 
-  // ── Loading state ──────────────────────────────────────────────────────────
-  if (loading) {
+  // ── Loading ───────────────────────────────────────────────────────────────
+  if (fetchState.loading) {
     return (
-      <div style={centerStyle}>
-        <p style={{ fontSize: 20, color: "#8b6a3e" }}>Loading resort map…</p>
+      <div className="resort-map-center">
+        <p className="resort-map-loading">Loading resort map…</p>
       </div>
     );
   }
 
-  // ── Error state ────────────────────────────────────────────────────────────
-  if (error) {
+  // ── Error ─────────────────────────────────────────────────────────────────
+  if (fetchState.error) {
     return (
-      <div style={centerStyle}>
-        <p style={{ color: "#c0392b", fontSize: 18 }}>{error}</p>
+      <div className="resort-map-center">
+        <p className="resort-map-error">{fetchState.error}</p>
         <button
+          className="retry-btn"
           onClick={loadMap}
-          style={retryBtnStyle}
         >
           Try again
         </button>
@@ -56,8 +59,7 @@ export function ResortMap() {
 
   if (!mapData) return null;
 
-  // ── Build 2D grid from flat tile list ─────────────────────────────────────
-  // Some rows in the ASCII map are shorter than cols — we fill with undefined
+  // ── Build 2D grid ─────────────────────────────────────────────────────────
   const grid: (Tile | undefined)[][] = Array.from(
     { length: mapData.rows },
     () => Array(mapData.cols).fill(undefined),
@@ -66,38 +68,25 @@ export function ResortMap() {
     grid[tile.row][tile.col] = tile;
   });
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-  return (
-    <div style={{ maxWidth: "max-content", margin: "0 auto" }}>
-      {/* Title */}
-      <h1
-        style={{
-          textAlign: "center",
-          marginBottom: "12px",
-          color: "#5a3e1b",
-          fontSize: 28,
-          letterSpacing: 1,
-          textShadow: "1px 1px 2px rgba(0,0,0,0.15)",
-        }}
-      >
-        🌴 Resort Cabana Map
-      </h1>
+  const availableCount = mapData.tiles.filter(
+    (t) => t.type === "W" && t.available,
+  ).length;
+  const bookedCount = mapData.tiles.filter(
+    (t) => t.type === "W" && t.booked,
+  ).length;
 
-      {/* Legend */}
+  return (
+    <div className="resort-map-container">
+      <h1 className="resort-map-title">🌴 Resort Cabana Map</h1>
+
       <Legend />
 
-      {/* Map grid */}
+      {/* gridTemplateColumns stays inline — it's dynamic */}
       <div
+        className="resort-map-grid"
         data-testid="resort-map"
         style={{
-          display: "grid",
           gridTemplateColumns: `repeat(${mapData.cols}, ${TILE_SIZE}px)`,
-          gap: 1,
-          padding: 12,
-          background: "rgba(255,255,255,0.3)",
-          borderRadius: 12,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
-          overflowX: "auto",
         }}
       >
         {grid.map((row, r) =>
@@ -109,19 +98,14 @@ export function ResortMap() {
                 onClick={setSelected}
               />
             ) : (
-              // Empty cell — just show parchment for cells beyond line length
               <div
                 key={`${r}-${c}`}
-                style={{
-                  width: TILE_SIZE,
-                  height: TILE_SIZE,
-                  overflow: "hidden",
-                }}
+                className="tile"
               >
                 <img
+                  className="tile-layer"
                   src="/assets/parchmentBasic.png"
                   alt=""
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
             ),
@@ -129,49 +113,20 @@ export function ResortMap() {
         )}
       </div>
 
-      {/* Debug info — remove before final submission */}
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: 8,
-          color: "#8b6a3e",
-          fontSize: 12,
-        }}
-      >
-        {mapData.tiles.filter((t) => t.type === "W" && t.available).length}{" "}
-        cabanas available
-        {" · "}
-        {mapData.tiles.filter((t) => t.type === "W" && t.booked).length} booked
-        {selected && ` · Selected: ${selected.cabanaId}`}
+      <p className="resort-map-stats">
+        🟢 {availableCount} available · 🔴 {bookedCount} booked
       </p>
 
-      {/* Phase 5: BookingModal will go here */}
       {selected && (
-        <p style={{ textAlign: "center", marginTop: 8, color: "#2980b9" }}>
-          🚧 Booking modal coming in Phase 5! (clicked: {selected.cabanaId},
-          booked: {String(selected.booked)})
-        </p>
+        <BookingModal
+          tile={selected}
+          onClose={() => setSelected(null)}
+          onBooked={() => {
+            setSelected(null);
+            loadMap();
+          }}
+        />
       )}
     </div>
   );
 }
-
-// ── Shared styles ────────────────────────────────────────────────────────────
-const centerStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: "50vh",
-  gap: 12,
-};
-
-const retryBtnStyle: React.CSSProperties = {
-  padding: "8px 20px",
-  background: "#e67e22",
-  color: "#fff",
-  border: "none",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontSize: 15,
-};

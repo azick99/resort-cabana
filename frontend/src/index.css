@@ -1,3 +1,4 @@
+/* ── Reset ──────────────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,9 +7,321 @@
 
 body {
   background-color: #f5e6c8;
-  background-image: url('/assets/parchmentBasic.png');
+  background-image: url("/assets/parchmentBasic.png");
   background-repeat: repeat;
   background-size: 200px;
   font-family: Georgia, serif;
   min-height: 100vh;
+}
+
+/* ── App ─────────────────────────────────────────────────────────────────── */
+.app-main {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* ── Resort Map ──────────────────────────────────────────────────────────── */
+.resort-map-container {
+  max-width: max-content;
+  margin: 0 auto;
+}
+
+.resort-map-title {
+  text-align: center;
+  margin-bottom: 12px;
+  color: #5a3e1b;
+  font-size: 28px;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.resort-map-grid {
+  display: grid;
+  gap: 1px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  overflow-x: auto;
+}
+
+.resort-map-stats {
+  text-align: center;
+  margin-top: 8px;
+  color: #8b6a3e;
+  font-size: 12px;
+}
+
+.resort-map-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 12px;
+}
+
+.resort-map-loading {
+  font-size: 20px;
+  color: #8b6a3e;
+}
+
+.resort-map-error {
+  color: #c0392b;
+  font-size: 18px;
+}
+
+.retry-btn {
+  padding: 8px 20px;
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: Georgia, serif;
+}
+
+.retry-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Tile ─────────────────────────────────────────────────────────────────── */
+.tile {
+  position: relative;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+
+.tile--clickable {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.tile--clickable:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.tile-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tile-layer--contain {
+  object-fit: contain;
+}
+
+.tile-status {
+  position: absolute;
+  inset: 0;
+  transition: background 0.3s;
+}
+
+.tile--available .tile-status {
+  background: rgba(50, 180, 80, 0.35);
+}
+
+.tile--booked .tile-status {
+  background: rgba(200, 50, 50, 0.55);
+}
+
+/* ── Legend ──────────────────────────────────────────────────────────────── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.legend-swatch {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.legend-swatch-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.legend-label {
+  color: #5a4a3a;
+  font-weight: 500;
+}
+
+/* ── Overlay ─────────────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+/* ── Modal Card ──────────────────────────────────────────────────────────── */
+.modal-card {
+  background: #fffdf8;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 360px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid #d4b896;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.modal-icon--large {
+  font-size: 64px;
+}
+
+.modal-title {
+  font-size: 22px;
+  color: #5a3e1b;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.modal-title--success {
+  color: #27ae60;
+}
+
+.modal-subtitle {
+  color: #8b6a3e;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.modal-field {
+  margin-bottom: 14px;
+}
+
+.modal-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5a4a3a;
+  margin-bottom: 4px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d4b896;
+  font-size: 15px;
+  background: #fdf8f0;
+  color: #3a2e1e;
+  outline: none;
+  font-family: Georgia, serif;
+}
+
+.modal-input:focus {
+  border-color: #e67e22;
+  box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
+}
+
+.modal-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fdf0ed;
+  border-radius: 6px;
+  border: 1px solid #e8b4ad;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.modal-booking-details {
+  background: #f8f4ee;
+  border: 1px solid #d4b896;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #5a4a3a;
+  line-height: 1.8;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.modal-btn {
+  padding: 10px 22px;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: Georgia, serif;
+  transition: opacity 0.2s;
+}
+
+.modal-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal-btn--cancel {
+  background: #95a5a6;
+}
+.modal-btn--book {
+  background: #e67e22;
+}
+.modal-btn--success {
+  background: #27ae60;
+  width: 100%;
+}
+.modal-btn--back {
+  background: #8b6a3e;
+  width: 100%;
 }
