@@ -6,7 +6,12 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node"]
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests"],
+  "ts-node": {
+    "esm": false,
+    "transpileOnly": true
+  }
 }
