@@ -3,6 +3,11 @@
 Interactive cabana booking webapp for luxury resorts. Guests can browse
 a visual map of the resort and book poolside cabanas in real time.
 
+## Preview
+
+Production -- [azistay.vercel.app](https://resort-cabana.vercel.app/)
+Github -- [github.com/azick99/resort-cabana](https://github.com/azick99/resort-cabana)
+
 ---
 
 ## Prerequisites
