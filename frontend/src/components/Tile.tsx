@@ -17,6 +17,22 @@ function getOverlayImage(tile: Tile): string | null {
   }
 }
 
+// Get the right CSS class for overlay image per tile type
+function getImageClass(tile: Tile): string {
+  switch (tile.type) {
+    case "#":
+      return "tile-layer tile-layer--path";
+    case "p":
+      return "tile-layer tile-layer--pool";
+    case "c":
+      return "tile-layer tile-layer--contain";
+    case "W":
+      return "tile-layer tile-layer--contain";
+    default:
+      return "tile-layer";
+  }
+}
+
 interface Props {
   tile: Tile;
   onClick: (tile: Tile) => void;
@@ -27,7 +43,6 @@ export function MapTile({ tile, onClick }: Props) {
   const overlayImage = getOverlayImage(tile);
   const rotation = tile.rotation ?? 0;
 
-  // Build class names
   const tileClass = [
     "tile",
     isClickable ? "tile--clickable" : "",
@@ -53,24 +68,24 @@ export function MapTile({ tile, onClick }: Props) {
       onClick={() => isClickable && onClick(tile)}
       onKeyDown={(e) => e.key === "Enter" && isClickable && onClick(tile)}
     >
-      {/* Layer 1 — parchment background */}
+      {/* Layer 1 — parchment background always shown */}
       <img
         className="tile-layer"
         src="/assets/parchmentBasic.png"
         alt=""
       />
 
-      {/* Layer 2 — tile image (rotation only stays inline — it's dynamic) */}
+      {/* Layer 2 — tile specific image */}
       {overlayImage && (
         <img
-          className={`tile-layer ${tile.type !== "#" ? "tile-layer--contain" : ""}`}
+          className={getImageClass(tile)}
           src={overlayImage}
           alt={tile.type}
           style={{ transform: `rotate(${rotation}deg)` }}
         />
       )}
 
-      {/* Layer 3 — green/red availability tint for cabanas */}
+      {/* Layer 3 — green/red tint for cabanas */}
       {tile.type === "W" && <div className="tile-status" />}
     </div>
   );

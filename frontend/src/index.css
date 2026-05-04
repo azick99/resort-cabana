@@ -85,7 +85,6 @@ body {
 .retry-btn:hover {
   opacity: 0.85;
 }
-
 /* ── Tile ─────────────────────────────────────────────────────────────────── */
 .tile {
   position: relative;
@@ -112,8 +111,19 @@ body {
   object-fit: cover;
 }
 
+/* ── Each tile type gets its own sizing ───────────────────────────────────── */
+.tile-layer--path {
+  object-fit: contain; /* ← changed from cover to contain */
+  padding: 2px; /* ← small padding so lines look connected */
+}
+
 .tile-layer--contain {
   object-fit: contain;
+  padding: 4px;
+}
+
+.tile-layer--pool {
+  object-fit: cover; /* pool fills the whole tile */
 }
 
 .tile-status {
@@ -129,7 +139,6 @@ body {
 .tile--booked .tile-status {
   background: rgba(200, 50, 50, 0.55);
 }
-
 /* ── Legend ──────────────────────────────────────────────────────────────── */
 .legend {
   display: flex;

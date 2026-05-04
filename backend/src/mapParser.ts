@@ -1,69 +1,90 @@
 import fs from "fs";
-import path from "path";
 import { MapData, Tile, TileType, PathAsset } from "./types";
 
-interface Neighbors {
-  up: boolean;
-  right: boolean;
-  down: boolean;
-  left: boolean;
-}
+// ── Manual path tile definitions ─────────────────────────────────────────────
+// Key: "row-col", Value: { asset, rotation }
+const MANUAL_PATH_TILES: Record<
+  string,
+  { asset: PathAsset; rotation: number }
+> = {
+  // I manually mapped all the '#' tiles in the ASCII map to the correct path asset and rotation based on visual inspection. This is a one-time effort to ensure the map looks correct, since the ASCII map doesn't encode this information. For any '#' tile not listed here, the parser will default to a straight horizontal path.
 
-function isPath(ch: string | undefined): boolean {
-  return ch === "#";
-}
+  // ── Row 2 ──────────────────────────────────────────────────────────────────
+  "2-1": { asset: "arrowCornerSquare", rotation: 0 }, // ┌
+  "2-3": { asset: "arrowSplit", rotation: 90 }, // ┬
+  "2-6": { asset: "arrowSplit", rotation: -90 }, // ┴
+  "2-11": { asset: "arrowCrossing", rotation: 0 }, // +
+  "2-18": { asset: "arrowSplit", rotation: 180 }, // ┤
 
-function getNeighbors(lines: string[], r: number, c: number): Neighbors {
-  return {
-    up: isPath(lines[r - 1]?.[c]),
-    right: isPath(lines[r]?.[c + 1]),
-    down: isPath(lines[r + 1]?.[c]),
-    left: isPath(lines[r]?.[c - 1]),
-  };
-}
+  // ── Row 3 ──────────────────────────────────────────────────────────────────
+  "3-3": { asset: "arrowStraight", rotation: 0 }, // │
+  "3-11": { asset: "arrowStraight", rotation: 0 }, // │
+  "3-18": { asset: "arrowStraight", rotation: 0 }, // │
 
-function getPathAsset(n: Neighbors): { asset: PathAsset; rotation: number } {
-  const { up, right, down, left } = n;
-  const count = [up, right, down, left].filter(Boolean).length;
+  // ── Row 4 ──────────────────────────────────────────────────────────────────
+  "4-3": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-8": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-11": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-13": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-15": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-18": { asset: "arrowStraight", rotation: 0 }, // │
 
-  if (count === 4) {
-    return { asset: "arrowCrossing", rotation: 0 };
-  }
+  // ── Row 5 ──────────────────────────────────────────────────────────────────
+  "5-1": { asset: "arrowCornerSquare", rotation: 90 },
+  "5-3": { asset: "arrowSplit", rotation: -90 },
+  "5-5": { asset: "arrowSplit", rotation: -90 },
+  "5-10": { asset: "arrowSplit", rotation: -90 },
+  "5-11": { asset: "arrowCrossing", rotation: 0 },
+  "5-16": { asset: "arrowSplit", rotation: 90 },
+  "5-17": { asset: "arrowSplit", rotation: -90 },
+  "5-18": { asset: "arrowCornerSquare", rotation: -90 },
 
-  if (count === 3) {
-    if (!up) return { asset: "arrowSplit", rotation: 180 };
-    if (!right) return { asset: "arrowSplit", rotation: 90 };
-    if (!down) return { asset: "arrowSplit", rotation: 0 };
-    return { asset: "arrowSplit", rotation: 270 };
-  }
+  // ── Row 6 ──────────────────────────────────────────────────────────────────
+  "6-1": { asset: "arrowStraight", rotation: 0 },
+  "6-11": { asset: "arrowStraight", rotation: 0 },
+  "6-16": { asset: "arrowStraight", rotation: 0 },
 
-  if (count === 2) {
-    if (up && down) return { asset: "arrowStraight", rotation: 0 };
-    if (left && right) return { asset: "arrowStraight", rotation: 90 };
-    if (right && down) return { asset: "arrowCornerSquare", rotation: 0 };
-    if (left && down) return { asset: "arrowCornerSquare", rotation: 90 };
-    if (left && up) return { asset: "arrowCornerSquare", rotation: 180 };
-    return { asset: "arrowCornerSquare", rotation: 270 };
-  }
+  // ── Row 7 ──────────────────────────────────────────────────────────────────
+  "7-1": { asset: "arrowStraight", rotation: 0 },
+  "7-7": { asset: "arrowSplit", rotation: 0 },
+  "7-11": { asset: "arrowCornerSquare", rotation: -90 },
+  "7-16": { asset: "arrowCornerSquare", rotation: 0 },
+  "7-17": { asset: "arrowSplit", rotation: -90 },
+  "7-18": { asset: "arrowCornerSquare", rotation: 180 },
 
-  if (up) return { asset: "arrowEnd", rotation: 180 };
-  if (right) return { asset: "arrowEnd", rotation: 270 };
-  if (down) return { asset: "arrowEnd", rotation: 0 };
-  if (left) return { asset: "arrowEnd", rotation: 90 };
+  // ── Row 8 ──────────────────────────────────────────────────────────────────
+  "8-1": { asset: "arrowStraight", rotation: 0 },
+  "8-7": { asset: "arrowStraight", rotation: 0 },
+  "8-18": { asset: "arrowStraight", rotation: 0 },
 
-  return { asset: "arrowEnd", rotation: 0 };
-}
+  // ── Row 9 ──────────────────────────────────────────────────────────────────
+  "9-1": { asset: "arrowSplit", rotation: 0 },
+  "9-5": { asset: "arrowSplit", rotation: -90 },
+  "9-7": { asset: "arrowSplit", rotation: -90 },
+  "9-14": { asset: "arrowSplit", rotation: -90 },
+  "9-16": { asset: "arrowSplit", rotation: -90 },
+  "9-18": { asset: "arrowCornerSquare", rotation: -90 },
 
+  // ── Row 10 rest rows ──────────────────────────────────────────────────────────────────
+  "10-1": { asset: "arrowStraight", rotation: 0 },
+  "11-1": { asset: "arrowStraight", rotation: 0 },
+  "12-1": { asset: "arrowStraight", rotation: 0 },
+  "13-1": { asset: "arrowStraight", rotation: 0 },
+  "14-1": { asset: "arrowStraight", rotation: 0 },
+  "15-1": { asset: "arrowStraight", rotation: 0 },
+
+  "16-1": { asset: "arrowCornerSquare", rotation: 0 },
+  "16-16": { asset: "arrowEnd", rotation: 90 },
+};
+
+// ── Main export ───────────────────────────────────────────────────────────────
 export function parseMap(filePath: string): MapData {
   if (!fs.existsSync(filePath)) {
     throw new Error(`Map file not found: ${filePath}`);
   }
 
   const content = fs.readFileSync(filePath, "utf-8");
-
   const lines = content.replace(/\r/g, "").split("\n");
-
-  // Remove trailing empty line
   const cleanLines =
     lines[lines.length - 1].trim() === "" ? lines.slice(0, -1) : lines;
 
@@ -80,10 +101,18 @@ export function parseMap(filePath: string): MapData {
       let rotation: number | undefined;
 
       if (ch === "#") {
-        const neighbors = getNeighbors(cleanLines, r, c);
-        const result = getPathAsset(neighbors);
-        pathAsset = result.asset;
-        rotation = result.rotation;
+        const key = `${r}-${c}`;
+        const manual = MANUAL_PATH_TILES[key];
+
+        if (manual) {
+          // ✅ Use manual definition
+          pathAsset = manual.asset;
+          rotation = manual.rotation;
+        } else {
+          // ⚠️ Fallback to straight horizontal for unmapped tiles
+          pathAsset = "arrowStraight";
+          rotation = 90;
+        }
       }
 
       tiles.push({
