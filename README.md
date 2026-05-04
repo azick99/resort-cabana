@@ -156,14 +156,8 @@ no authentication beyond room number + name matching.
 
 ![Resort Map](cabana-screenshot.jpeg)
 
+## My Thoughts
 
+The `map.ascii` file looked a bit complicated at first, especially since the path didn’t seem to align perfectly with the chalets. Initially, I considered modifying the file to make it fit better. However, after rereading the task, I noticed that it explicitly said not to change `map.ascii`, so I decided to leave it as is.
 
-
-## My thoughts
-
-Why in map.ascii kinda complicated map, meaning path is not fit into chalets?
-First I tried to change the map.ascii but then I read the task again. I change
-my mind beacouse in task writen that don't touch to map.ascii so I leave it.
-even though there were no task to deploy, for interest I deployed frontend 
-in Vercel and backend in render.com.
-
+Even though deployment was not required, I went a bit further out of curiosity and deployed the frontend on Vercel and the backend on Render.
