@@ -30,7 +30,18 @@ chmod +x run.sh
 # With custom files
 ./run.sh --map ./map.ascii --bookings ./bookings.json
 ```
+## Manual Start in dev mode
+```bash
 
+#backend
+cd backend
+npm run dev
+
+#frontend
+cd frontend
+npm run dev
+
+```
 | Service  | URL                   |
 | -------- | --------------------- |
 | Frontend | http://localhost:5173 |

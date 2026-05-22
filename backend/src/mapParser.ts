@@ -10,28 +10,31 @@ const MANUAL_PATH_TILES: Record<
   // I manually mapped all the '#' tiles in the ASCII map to the correct path asset and rotation based on visual inspection. This is a one-time effort to ensure the map looks correct, since the ASCII map doesn't encode this information. For any '#' tile not listed here, the parser will default to a straight horizontal path.
 
   // ── Row 2 ──────────────────────────────────────────────────────────────────
-  "2-1": { asset: "arrowCornerSquare", rotation: 0 }, // ┌
-  "2-3": { asset: "arrowSplit", rotation: 90 }, // ┬
-  "2-6": { asset: "arrowSplit", rotation: -90 }, // ┴
-  "2-11": { asset: "arrowCrossing", rotation: 0 }, // +
-  "2-18": { asset: "arrowSplit", rotation: 180 }, // ┤
+  "2-1": { asset: "arrowCornerSquare", rotation: 0 }, //
+  "2-3": { asset: "arrowSplit", rotation: 90 }, //
+  "2-6": { asset: "arrowSplit", rotation: -90 }, //
+  "2-8": { asset: "arrowSplit", rotation: 90 }, //
+  "2-11": { asset: "arrowCrossing", rotation: 0 }, //
+  "2-13": { asset: "arrowSplit", rotation: 90 }, //
+  "2-15": { asset: "arrowSplit", rotation: 90 }, //
+  "2-18": { asset: "arrowSplit", rotation: 180 }, //
 
   // ── Row 3 ──────────────────────────────────────────────────────────────────
-  "3-3": { asset: "arrowStraight", rotation: 0 }, // │
-  "3-11": { asset: "arrowStraight", rotation: 0 }, // │
-  "3-18": { asset: "arrowStraight", rotation: 0 }, // │
+  "3-3": { asset: "arrowStraight", rotation: 0 }, //
+  "3-11": { asset: "arrowStraight", rotation: 0 }, //
+  "3-18": { asset: "arrowStraight", rotation: 0 }, //
 
   // ── Row 4 ──────────────────────────────────────────────────────────────────
-  "4-3": { asset: "arrowStraight", rotation: 0 }, // │
-  "4-8": { asset: "arrowStraight", rotation: 0 }, // │
-  "4-11": { asset: "arrowStraight", rotation: 0 }, // │
-  "4-13": { asset: "arrowStraight", rotation: 0 }, // │
-  "4-15": { asset: "arrowStraight", rotation: 0 }, // │
-  "4-18": { asset: "arrowStraight", rotation: 0 }, // │
+  "4-3": { asset: "arrowStraight", rotation: 0 }, //
+  "4-8": { asset: "arrowStraight", rotation: 0 }, //
+  "4-11": { asset: "arrowStraight", rotation: 0 }, //
+  "4-13": { asset: "arrowStraight", rotation: 0 }, //
+  "4-15": { asset: "arrowStraight", rotation: 0 }, //
+  "4-18": { asset: "arrowStraight", rotation: 0 }, //
 
   // ── Row 5 ──────────────────────────────────────────────────────────────────
   "5-1": { asset: "arrowCornerSquare", rotation: 90 },
-  "5-3": { asset: "arrowSplit", rotation: -90 },
+  "5-3": { asset: "arrowCrossing", rotation: 0 },
   "5-5": { asset: "arrowSplit", rotation: -90 },
   "5-10": { asset: "arrowSplit", rotation: -90 },
   "5-11": { asset: "arrowCrossing", rotation: 0 },
@@ -45,9 +48,9 @@ const MANUAL_PATH_TILES: Record<
   "6-16": { asset: "arrowStraight", rotation: 0 },
 
   // ── Row 7 ──────────────────────────────────────────────────────────────────
-  "7-1": { asset: "arrowStraight", rotation: 0 },
+  "7-1": { asset: "arrowSplit", rotation: 0 },
   "7-7": { asset: "arrowSplit", rotation: 0 },
-  "7-11": { asset: "arrowCornerSquare", rotation: -90 },
+  "7-11": { asset: "arrowSplit", rotation: -90 },
   "7-16": { asset: "arrowCornerSquare", rotation: 0 },
   "7-17": { asset: "arrowSplit", rotation: -90 },
   "7-18": { asset: "arrowCornerSquare", rotation: 180 },
